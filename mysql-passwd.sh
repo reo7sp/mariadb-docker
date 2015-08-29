@@ -8,7 +8,7 @@ fi
 
 mysqld --skip-grant-tables --skip-networking > /dev/null 2> /dev/null &
 
-echo -n "MariaDB is starting"
+echo -n "mysql is starting"
 i=30
 while [ $i -ne 0 ]
 do
@@ -24,7 +24,7 @@ done
 echo
 if [ "$i" -eq 0 ]
 then
-	echo >&2 "MariaDB failed to start."
+	echo >&2 "mysql failed to start."
 	exit 1
 fi
 

@@ -18,9 +18,11 @@ RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db 
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
+COPY mysql-entrypoint.sh /mysql-entrypoint.sh
 COPY mysql-passwd.sh /mysql-passwd.sh
 COPY my.cnf /etc/mysql/my.cnf
 
 VOLUME /var/lib/mysql
 EXPOSE 3306
+ENTRYPOINT ["sh", "/mysql-entrypoint.sh"]
 CMD ["mysqld"]
