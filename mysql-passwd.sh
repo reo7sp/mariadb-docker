@@ -6,16 +6,20 @@ then
 	exit 1
 fi
 
-mysqld --skip-grant-tables --skip-networking &
+mysqld --skip-grant-tables --skip-networking > /dev/null 2> /dev/null &
 
-echo -n "MariaDB is starting."
-for i in {30..0}; do
-	if echo "SELECT 1" | mysql -u root
+echo -n "MariaDB is starting"
+i=30
+while [ $i -ne 0 ]
+do
+	echo -n "."
+	echo "SELECT 1" | mysql -u root > /dev/null 2> /dev/null
+	if [ $? -eq 0 ]
 	then
 		break
 	fi
-	echo -n "."
 	sleep 1
+	i=$((i-1))
 done
 echo
 if [ "$i" -eq 0 ]
@@ -26,6 +30,6 @@ fi
 
 mysql -u root <<-END
 	FLUSH PRIVILEGES;
-	SET PASSWORD FOR '${1}'@'localhost' = PASSWORD('${2}');
+	UPDATE mysql.user SET Password=PASSWORD('${2}') WHERE User='${1}';
 	FLUSH PRIVILEGES;
 END
