@@ -8,17 +8,19 @@ fi
 
 mysqld --skip-grant-tables --skip-networking &
 
-echo "Waiting mariadb to start."
+echo -n "MariaDB is starting."
 for i in {30..0}; do
-	if echo 'SELECT 1' | mysql -u root &> /dev/null; then
+	if echo "SELECT 1" | mysql -u root
+	then
 		break
 	fi
 	echo -n "."
 	sleep 1
 done
 echo
-if [ "$i" = 0 ]; then
-	echo >&2 "mariadb failed to start."
+if [ "$i" -eq 0 ]
+then
+	echo >&2 "MariaDB failed to start."
 	exit 1
 fi
 
