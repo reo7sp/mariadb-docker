@@ -2,6 +2,6 @@
 
 set -e
 
-chown -R mysql:mysql /var/lib/mysql
-
+sh /mysql-init.sh
+chown -R mysql:mysql "$DATADIR"
 exec "$@"

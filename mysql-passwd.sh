@@ -15,3 +15,5 @@ mysql -u root <<-END
 	UPDATE mysql.user SET Password=PASSWORD('${2}') WHERE User='${1}';
 	FLUSH PRIVILEGES;
 END
+
+kill /var/run/mysqld/mysqld.pid
