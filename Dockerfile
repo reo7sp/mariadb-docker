@@ -11,8 +11,8 @@ RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db 
 		echo 'Pin-Priority: 999'; \
 	} > /etc/apt/preferences.d/mariadb && \
 	{ \
-		echo mariadb-server-$MARIADB_MAJOR mysql-server/root_password password 'unused'; \
-		echo mariadb-server-$MARIADB_MAJOR mysql-server/root_password_again password 'unused'; \
+		echo mariadb-server-$MARIADB_MAJOR mysql-server/root_password password 'unset'; \
+		echo mariadb-server-$MARIADB_MAJOR mysql-server/root_password_again password 'unset'; \
 	} | debconf-set-selections && \
 	apt-get install -y mariadb-server && \
 	apt-get clean && \
