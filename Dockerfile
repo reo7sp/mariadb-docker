@@ -19,9 +19,6 @@ RUN apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db 
 	rm -rf /var/lib/apt/lists/*
 
 COPY mysql-run.sh /mysql-run.sh
-COPY mysql-init.sh /mysql-init.sh
-COPY mysql-wait.sh /mysql-wait.sh
-COPY mysql-passwd.sh /mysql-passwd.sh
 COPY my.cnf /etc/mysql/my.cnf
 RUN mkdir -p /mysql-init.d
 
