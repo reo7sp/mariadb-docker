@@ -2,7 +2,7 @@
 
 cd /
 
-if [ ! -d "$DATADIR/mysql" ]
+if [ ! -d "/var/lib/mysql/mysql" ]
 then
 	echo ":: Initializing MySQL..."
 
@@ -35,21 +35,6 @@ then
 	fi
 	echo ":: MySQL daemon has been started"
 
-	# collection user sql files
-	user_sql=""
-	if [ -d "/mysql-init.d" ]
-	then
-		echo ":: Reading user sql files"
-		for f in $(find /mysql-init.d -type f)
-		do
-			case "$f" in
-				*.sql) echo ":: $f"; user_sql="$user_sql $(cat "$f")" ;;
-				*)     ;;
-			esac
-		done
-		echo ":: Done"
-	fi
-
 	# doing some mysql setup
 	echo ":: Doing MySQL setup"
 	if [ -f "/mysql-init.d/rootpw.txt" ]
@@ -68,7 +53,6 @@ then
 		GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION;
 		DROP DATABASE IF EXISTS test;
 		FLUSH PRIVILEGES;
-		${user_sql}
 	END
 	echo ":: Done"
 
@@ -80,6 +64,7 @@ then
 		do
 			case "$f" in
 				*.sh)  echo ":: Running script $f"; sh "$f" ;;
+				*.sql) echo ":: Running sql file $f"; mysql -uroot -p$mysql_rootpw < "$f" ;;
 				*)     ;;
 			esac
 		done
