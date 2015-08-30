@@ -64,7 +64,7 @@ then
 		do
 			case "$f" in
 				*.sh)  echo ":: Running script $f"; sh "$f" ;;
-				*.sql) echo ":: Running sql file $f"; mysql -u root < "$f" ;;
+				*.sql) echo ":: Running sql file $f"; mysql -u root -p $MYSQL_ROOT_PASSWORD < "$f" ;;
 				*)     ;;
 			esac
 		done
