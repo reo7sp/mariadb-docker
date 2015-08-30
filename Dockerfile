@@ -23,6 +23,7 @@ COPY mysql-init.sh /mysql-init.sh
 COPY mysql-wait.sh /mysql-wait.sh
 COPY mysql-passwd.sh /mysql-passwd.sh
 COPY my.cnf /etc/mysql/my.cnf
+RUN mkdir -p /mysql-init.d
 
 VOLUME /var/lib/mysql
 EXPOSE 3306

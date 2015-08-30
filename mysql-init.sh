@@ -11,5 +11,11 @@ then
 	echo "Initializing mysql."
 	mysql_install_db --user=mysql --datadir="$DATADIR"
 	echo "Done."
+
+	for f in /mysql-init.d/*
+	do
+		echo "Running mysql init script $f"
+		sh "$f"
+	done
 fi
 
