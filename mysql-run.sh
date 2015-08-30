@@ -20,7 +20,7 @@ then
 	i=30
 	while [ $i -ne 0 ]
 	do
-		echo "SELECT 1" | mysql -u root
+		echo "SELECT 1" | mysql -uroot
 		if [ $? -eq 0 ]
 		then
 			break
@@ -35,24 +35,40 @@ then
 	fi
 	echo ":: MySQL daemon has been started"
 
+	# collection user sql files
+	user_sql=""
+	if [ -d "/mysql-init.d" ]
+	then
+		echo ":: Reading user sql files"
+		for f in $(find /mysql-init.d -type f)
+		do
+			case "$f" in
+				*.sql) echo ":: $f"; user_sql="$user_sql $(cat "$f")" ;;
+				*)     ;;
+			esac
+		done
+		echo ":: Done"
+	fi
+
 	# doing some mysql setup
 	echo ":: Doing MySQL setup"
-	mysql_tzinfo_to_sql /usr/share/zoneinfo | sed "s/Local time zone must be set--see zic manual page/FCTY/" | mysql -u root mysql
 	if [ -f "/mysql-init.d/rootpw.txt" ]
 	then
-		MYSQL_ROOT_PASSWORD=$(cat "/mysql-init.d/rootpw.txt" | sed "s/\n//g; s/\r//g")
+		mysql_rootpw=$(cat "/mysql-init.d/rootpw.txt" | sed "s/\n//g; s/\r//g")
 	else
 		echo >&2 ":: /mysql-init.d/rootpw.txt can't be found. Setting MySQL root password to \"unset\""
-		MYSQL_ROOT_PASSWORD=unset
+		mysql_rootpw=unset
 	fi
-	mysql -u root <<-END
+	mysql -uroot <<-END
 		SET @@SESSION.SQL_LOG_BIN=0;
 		FLUSH PRIVILEGES;
 		DELETE FROM mysql.user;
-		CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+		FLUSH PRIVILEGES;
+		CREATE USER 'root'@'%' IDENTIFIED BY '${mysql_rootpw}';
 		GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION;
 		DROP DATABASE IF EXISTS test;
 		FLUSH PRIVILEGES;
+		${user_sql}
 	END
 	echo ":: Done"
 
@@ -60,11 +76,10 @@ then
 	if [ -d "/mysql-init.d" ]
 	then
 		echo ":: Running user scripts"
-		for f in $(find /mysql-init.d/ -type f)
+		for f in $(find /mysql-init.d -type f)
 		do
 			case "$f" in
 				*.sh)  echo ":: Running script $f"; sh "$f" ;;
-				*.sql) echo ":: Running sql file $f"; mysql -u root -p $MYSQL_ROOT_PASSWORD < "$f" ;;
 				*)     ;;
 			esac
 		done
