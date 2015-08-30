@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 if [ ! -d "$DATADIR/mysql" ]
 then
 	mkdir -p "/var/lib/mysql"
@@ -12,7 +10,7 @@ then
 
 	if [ -d "/mysql-init.d" ]
 	then
-		for f in /mysql-init.d/*
+		for f in $(find /mysql-init.d/ -type f)
 		do
 			echo "Running mysql init script $f"
 			sh "$f"
